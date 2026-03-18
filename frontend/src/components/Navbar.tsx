@@ -14,14 +14,14 @@ export default function Navbar({ logoUrl, companyName = 'Wahana Data Utama' }: N
     <header className="fixed top-0 left-0 right-0 z-50 glass-header">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="h-10 w-auto">
-            <img alt="Wahana Data Utama Logo" className="h-full w-auto object-contain" src={logoUrl || '/logo.png'} />
+          <div className="h-4 w-auto">
+            <img alt="Wahana Data Utama Logo" className="h-full w-auto object-contain" src={logoUrl || '/wdu-ijo.png'} />
           </div>
-          <h2 className="text-lg font-extrabold tracking-tight text-accent-dark uppercase">
+          {/* <h2 className="text-lg font-extrabold tracking-tight text-accent-dark uppercase">
             {companyName.split(' ').map((word, i) => (
               <span key={i} className={i === 1 ? 'text-primary' : ''}>{word} </span>
             ))}
-          </h2>
+          </h2> */}
         </div>
 
         <nav className="hidden lg:flex items-center gap-10">
@@ -34,7 +34,7 @@ export default function Navbar({ logoUrl, companyName = 'Wahana Data Utama' }: N
         </nav>
 
         <button className="btn-futuristic-primary text-white px-7 py-3 rounded-full text-xs font-black tracking-widest uppercase shadow-lg">
-          Mulai Proyek
+          Download Company Profile
         </button>
       </div>
     </header>

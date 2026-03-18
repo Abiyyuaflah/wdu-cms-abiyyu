@@ -16,8 +16,15 @@ const config: Config = {
         "accent-dark": "#0f172a",
       },
       fontFamily: {
-        display: ["var(--font-plus-jakarta)", "sans-serif"],
-        body: ["var(--font-sora)", "sans-serif"],
+        display: ["Plus Jakarta Sans", "sans-serif"],
+        body: ["Sora", "sans-serif"],
+      },
+      borderRadius: {
+        DEFAULT: "0.375rem",
+        lg: "0.75rem",
+        xl: "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "2.5rem",
       },
     },
   },

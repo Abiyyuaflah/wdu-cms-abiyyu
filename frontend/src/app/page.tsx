@@ -3,7 +3,6 @@ import Hero from '@/components/Hero';
 import Services from '@/components/Services';
 import Gallery from '@/components/Gallery';
 import About from '@/components/About';
-import Testimonials from '@/components/Testimonials';
 import Footer from '@/components/Footer';
 
 const defaultServices = [
@@ -39,30 +38,6 @@ const defaultGallery = [
   { id: 6, title: 'Project Zeta', imageUrl: 'https://picsum.photos/800/600?random=6' },
 ];
 
-const defaultTestimonials = [
-  {
-    id: 1,
-    quote: 'Wahana Data Utama redefined how we approach national statistics. Their precision is unparalleled in the industry.',
-    authorName: 'Bambang Kusuma',
-    authorRole: 'Director, Ministry of Finance',
-    rating: 5,
-  },
-  {
-    id: 2,
-    quote: "They don't just deliver reports; they deliver roadmaps to the future. Our growth spiked 40% after implementing their insights.",
-    authorName: 'Amanda Suherman',
-    authorRole: 'CEO, DigiFlow Asia',
-    rating: 5,
-  },
-  {
-    id: 3,
-    quote: 'True technological partners.',
-    authorName: 'Digital Strategist',
-    authorRole: 'Bank Central',
-    rating: 5,
-  },
-];
-
 export default function Home() {
   return (
     <main className="bg-background-light text-slate-700 overflow-x-hidden antialiased selection:bg-primary/30">
@@ -71,7 +46,6 @@ export default function Home() {
       <Services services={defaultServices} />
       <Gallery items={defaultGallery} />
       <About />
-      <Testimonials testimonials={defaultTestimonials} />
       
       <section className="py-24 border-y border-slate-100 bg-slate-50/80">
         <div className="max-w-7xl mx-auto px-6">
