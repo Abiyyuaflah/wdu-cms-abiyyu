@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model GlobalContent {
+  id          Int    @id @default(1)
+  heroHeadline String @default("Data is Dynamic.")
+  heroSubtext  String @default("Wahana Data Utama architects intelligence. We bridge the gap between complex raw data and high-velocity business growth.")
+  aboutTitle  String @default("Human Intuition. Machine Precision.")
+  aboutText   String @default("Founded in 2006, we've evolved from a research powerhouse into a digital transformation catalyst.")
+  address     String @default("SCBD Sector 7, Jakarta Digital District, ID 12190")
+  email       String @default("uplink@wahanadata.tech")
+  phone       String @default("+62 (21) 1234 5678")
+  footerText  String @default("Architecting the future of intelligence through sustainable data-driven ecosystems since 2006.")
+}
+
+model Service {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+  icon        String
+  link        String
+  order       Int    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Gallery {
+  id          Int      @id @default(autoincrement())
+  title       String
+  imageUrl    String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id          Int    @id @default(autoincrement())
+  quote       String
+  authorName  String
+  authorRole  String
+  rating      Int    @default(5)
+  order       Int    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
