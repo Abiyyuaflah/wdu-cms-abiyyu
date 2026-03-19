@@ -326,7 +326,7 @@ Use the `schema.prisma` provided to build dynamic CRUD endpoints.
 <img alt="Strategic Vision" class="w-full h-full object-cover grayscale transition-all duration-1000 hover:grayscale-0 hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWx-ohTYzay4u5Hf1OxWncK-U84yS84853KgJMYPUeqO4JmnKYfOjjrnhhJnMuK2H2tFIL3_jduB0i0I6fSqs2W02rcl1Fz4RE9lFbtTLnLwWlfcOL-rebzKkydrO8-dC0Fc_3Pv3Axuw-8qf2RG5BCXCXpiWgnmnPisjvL77L9eeeV36AtqYBIHy0Oqa4jiNyoBH9p4zBSVP24h0w7twZHhjHhybslqLAkDj_yNBiuxRtsr1ydC8btpSaDminerCCaSIHLqrsH9dP"/>
 </div>
 <div class="absolute -bottom-10 -left-10 glass p-10 rounded-3xl border border-white shadow-2xl backdrop-blur-2xl">
-<p class="text-5xl font-black text-accent-dark mb-1">18+</p>
+<p class="text-5xl font-black text-accent-dark mb-1">20</p>
 <p class="text-[9px] font-black uppercase tracking-[0.3em] text-primary">Years of Evolution</p>
 </div>
 </div>

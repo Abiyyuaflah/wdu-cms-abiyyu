@@ -4,15 +4,15 @@ interface AboutProps {
   yearsExperience?: number;
 }
 
-export default function About({ 
-  title = 'Human Intuition. Machine Precision.', 
+export default function About({
+  title = 'Human Intuition. Machine Precision.',
   text = "Founded in 2006, we've evolved from a research powerhouse into a digital transformation catalyst. We understand that data isn't just numbers—it's the pulse of your future enterprise.",
-  yearsExperience = 18 
+  yearsExperience = 18
 }: AboutProps) {
   return (
     <section className="py-32 bg-white relative overflow-hidden">
       <div className="absolute -top-20 -right-20 w-96 h-96 bg-primary/5 rounded-full blur-[100px]"></div>
-      
+
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col lg:flex-row items-center gap-24">
           <div className="lg:w-1/2 relative">
@@ -25,7 +25,7 @@ export default function About({
               />
             </div>
             <div className="absolute -bottom-10 -left-10 glass p-10 rounded-3xl border border-white shadow-2xl backdrop-blur-2xl">
-              <p className="text-5xl font-black text-accent-dark mb-1">{yearsExperience}+</p>
+              <p className="text-5xl font-black text-accent-dark mb-1">20+</p>
               <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">Years of Evolution</p>
             </div>
           </div>

@@ -16,9 +16,11 @@ export default function Hero({ headline = 'Data is Dynamic.', subtext, backgroun
         style={{
           backgroundImage: `url(${defaultBgImage})`,
           backgroundPosition: 'right center',
+          filter: 'brightness(0.85) saturate(1.1)',
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white/30" />
+      <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-white/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
       <div className="absolute inset-0 data-grid-bg opacity-30" />
       <div className="absolute top-20 -right-40 w-[45rem] h-[45rem] hero-blob rounded-full" />
       <div className="absolute bottom-0 -left-40 w-[40rem] h-[40rem] hero-blob rounded-full opacity-40" />
