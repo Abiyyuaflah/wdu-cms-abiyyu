@@ -7,55 +7,83 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model GlobalContent {
-  id          Int    @id @default(1)
-  heroHeadline String @default("Data is Dynamic.")
-  heroSubtext  String @default("Wahana Data Utama architects intelligence. We bridge the gap between complex raw data and high-velocity business growth.")
-  aboutTitle  String @default("Human Intuition. Machine Precision.")
-  aboutText   String @default("Founded in 2006, we've evolved from a research powerhouse into a digital transformation catalyst.")
-  address     String @default("SCBD Sector 7, Jakarta Digital District, ID 12190")
-  email       String @default("uplink@wahanadata.tech")
-  phone       String @default("+62 (21) 1234 5678")
-  footerText  String @default("Architecting the future of intelligence through sustainable data-driven ecosystems since 2006.")
+enum Role {
+  SUPER_ADMIN
+  EDITOR
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         Role     @default(EDITOR)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Page {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  metaTitle   String?
+  metaDesc    String?
+  isPublished Boolean  @default(false)
+  sections    Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  updatedBy   String?
 }
 
 model Service {
-  id          Int    @id @default(autoincrement())
+  id          String   @id @default(cuid())
   title       String
   description String
-  icon        String
-  link        String
-  order       Int    @default(0)
+  icon        String?
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-model Gallery {
-  id          Int      @id @default(autoincrement())
+model Project {
+  id          String   @id @default(cuid())
   title       String
-  imageUrl    String
+  client      String
+  category    String
+  year        Int
+  description String?
+  imageUrl    String?
+  isHighlight Boolean  @default(false)
   order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-model Testimonial {
-  id          Int    @id @default(autoincrement())
-  quote       String
-  authorName  String
-  authorRole  String
-  rating      Int    @default(5)
-  order       Int    @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Media {
+  id         String   @id @default(cuid())
+  filename   String
+  url        String
+  mimeType   String
+  size       Int
+  altText    String?
+  uploadedBy String
+  createdAt  DateTime @default(now())
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  password  String
-  name      String?
-  role      String   @default("admin")
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model SiteConfig {
+  key       String   @id
+  value     String
   updatedAt DateTime @updatedAt
 }

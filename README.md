@@ -1,248 +1,230 @@
-# WDU CMS - Wahana Data Utama Content Management System
+# WDU CMS - Panduan Instalasi
 
-A professional CMS for Wahana Data Utama built with Node.js, Express, Prisma, and Next.js.
+Panduan ini dibuat untuk developer/intern yang akan mengembangkan project WDU CMS.
 
-## Tech Stack
+---
 
-- **Backend**: Node.js, Express, TypeScript, Prisma (PostgreSQL)
-- **Frontend**: Next.js 14 (App Router), Tailwind CSS
-- **Assets**: Material Symbols
+## Prerequisites (Software yang Wajib Diinstall)
 
-## Prerequisites
+Sebelum mulai, install software berikut di komputer kamu:
 
-- Node.js 18+
-- PostgreSQL 14+
-- npm atau yarn
+1. **Node.js** (v20 LTS)
+   - Download: https://nodejs.org/
+   - Cek install: `node -v` (harus 20.x.x)
 
-## Installation
+2. **Git**
+   - Download: https://git-scm.com/
+   - Cek install: `git --version`
 
-### 1. Clone dan Setup Project
+3. **PostgreSQL** (sudah ada di XAMPP atau install terpisah)
+   - Kalau pakai XAMPP, pastikan PostgreSQL sudah running
+   - Default port: 5432
+   - Username: `postgres`
+   - Password: `Nasigoreng123@` (sesuaikan kalau berbeda)
+
+---
+
+## Langkah-Langkah Instalasi
+
+### 1. Clone Repository
+
+Buka terminal/command prompt, lalu jalankan:
 
 ```bash
-# Clone repository
-git clone <repo-url>
+git clone <url-repository> wdu-cms
 cd wdu-cms
+```
 
-# Install backend dependencies
-cd wdu-cms/backend
+### 2. Install Dependencies
+
+Ada 3 tempat yang perlu diinstall:
+
+```bash
+# Install dependencies root
 npm install
 
-# Install frontend dependencies  
-cd ../wdu-cms/frontend
+# Install dependencies frontend
+cd frontend
 npm install
+cd ..
+
+# Install dependencies backend
+cd backend
+npm install
+cd ..
 ```
 
-### 2. Database Setup
-
-#### Menggunakan PostgreSQL
-
-1. Buat database PostgreSQL:
-```sql
-CREATE DATABASE wdu_cms;
+**Atau cukup:**
+```bash
+npm install
+cd frontend && npm install && cd ..
+cd backend && npm install && cd ..
 ```
 
-2. Konfigurasi environment variable di `backend/.env`:
-```env
-DATABASE_URL="postgresql://username:password@localhost:5432/wdu_cms"
-PORT=3001
-NODE_ENV=development
+### 3. Setup Database
+
+Pastikan PostgreSQL sudah running, lalu jalankan:
+
+```bash
+npm run db:setup
 ```
 
-3. Generate Prisma Client danjalankan migration:
+Ini akan:
+- Membuat database `wdu_cms_db` (jika belum ada)
+- Sinkronisasi schema Prisma
+- Generate Prisma Client
+
+**Kalau ada error "password authentication failed":**
+- Cek file `backend/.env` - pastikan password PostgreSQL sesuai
+- Jika password berbeda, edit bagian ini:
+  ```
+  DATABASE_URL="postgresql://postgres:PASSWORD_KAMU@localhost:5432/wdu_cms_db"
+  ```
+
+### 4. Buat Akun Admin
+
 ```bash
 cd backend
-npx prisma generate
-npx prisma migrate dev --name init
+npm run db:seed
 ```
 
-4. (Optional) Seed data awal:
+Akan membuat user:
+- Email: `admin@wdu.co.id`
+- Password: `admin123`
+
+---
+
+## Menjalankan Project
+
+### Cara 1: Jalanin FE dan BE bareng-bareng
+
 ```bash
-npx prisma db seed
+npm run dev
 ```
 
-#### Menggunakan SQLite (Development)
+Akan muncul dua server:
+- **Frontend:** http://localhost:5173
+- **Backend:** http://localhost:3001/api/v1
 
-1. Ubah `backend/prisma/schema.prisma`:
-```prisma
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-```
+### Cara 2: Jalanin分开 (Terpisah)
 
-2. Ubah `backend/.env`:
-```env
-DATABASE_URL="file:./dev.db"
-PORT=3001
-NODE_ENV=development
-```
-
-3. Generate dan migrate:
-```bash
-cd backend
-npx prisma generate
-npx prisma migrate dev --name init
-```
-
-## Running the Application
-
-### Backend
-
+**Terminal 1 - Backend:**
 ```bash
 cd backend
 npm run dev
 ```
 
-Backend akan running di `http://localhost:3001`
-
-### Frontend
-
+**Terminal 2 - Frontend:**
 ```bash
 cd frontend
 npm run dev
 ```
 
-Frontend akan running di `http://localhost:3000`
+---
 
-## API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/landing` | Get all landing page content |
-| POST | `/api/admin/update` | Update content (services, gallery, testimonials, global content) |
-
-### Request Body Examples
-
-#### Update Services
-```json
-{
-  "section": "services",
-  "data": {
-    "title": "Neural Research",
-    "description": "AI-driven consumer behavioral analysis",
-    "icon": "query_stats",
-    "link": "System Architecture"
-  }
-}
-```
-
-#### Update Gallery
-```json
-{
-  "section": "gallery", 
-  "data": {
-    "title": "Project Alpha",
-    "imageUrl": "https://example.com/image.jpg"
-  }
-}
-```
-
-## Project Structure
+## Struktur Folder
 
 ```
 wdu-cms/
-├── backend/
+├── frontend/              # Aplikasi React (Frontend)
+│   ├── src/
+│   │   ├── components/   # Komponen UI (Header, Footer, dll)
+│   │   ├── pages/        # Halaman website (Home, About, dll)
+│   │   ├── admin/        # Halaman admin panel
+│   │   ├── store/        # State management (Zustand)
+│   │   ├── services/     # API calls (Axios)
+│   │   └── router/       # Konfigurasi routing
+│   └── package.json
+│
+├── backend/               # Server Node.js (Backend)
+│   ├── src/
+│   │   ├── routes/       # API routes (auth, pages, services, dll)
+│   │   └── server.ts     # Entry point server
 │   ├── prisma/
-│   │   └── schema.prisma      # Database schema
-│   ├── src/
-│   │   ├── config/
-│   │   │   └── prisma.ts      # Prisma client
-│   │   ├── controllers/
-│   │   │   └── contentController.ts
-│   │   ├── middleware/
-│   │   │   └── errorMiddleware.ts
-│   │   ├── routes/
-│   │   │   └── contentRoutes.ts
-│   │   └── app.ts             # Express app entry
-│   ├── .env
-│   ├── package.json
-│   └── tsconfig.json
+│   │   ├── schema.prisma # Database schema (tabel-tabel)
+│   │   └── seed.ts      # Script buat user admin
+│   ├── .env              # Environment variables
+│   └── package.json
 │
-├── frontend/
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── layout.tsx
-│   │   │   ├── page.tsx
-│   │   │   └── globals.css
-│   │   ├── components/
-│   │   │   ├── Navbar.tsx
-│   │   │   ├── Hero.tsx
-│   │   │   ├── Services.tsx
-│   │   │   ├── Gallery.tsx
-│   │   │   ├── About.tsx
-│   │   │   ├── Testimonials.tsx
-│   │   │   └── Footer.tsx
-│   │   └── lib/
-│   │       └── api.ts        # API client
-│   ├── package.json
-│   ├── tailwind.config.ts
-│   └── tsconfig.json
-│
-├── init_wdu.sh
-├── MASTER_INSTRUCTIONS.md
-└── README.md
+├── .env                  # Root env (kosong, tidak perlu diubah)
+├── README.md             # Dokumen ini
+└── package.json          # Scripts utama
 ```
 
-## Available Scripts
-
-### Backend
-```bash
-npm run dev          # Start development server
-npm run build        # Build TypeScript
-npm run start        # Start production server
-npm run prisma:generate  # Generate Prisma client
-npm run prisma:migrate   # Run migrations
-```
-
-### Frontend
-```bash
-npm run dev          # Start development server
-npm run build        # Build production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-```
-
-## Environment Variables
-
-### Backend (.env)
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/wdu_cms
-PORT=3001
-NODE_ENV=development
-```
-
-### Frontend (.env.local)
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3001/api
-```
+---
 
 ## Troubleshooting
 
-### Port already in use
+### Error: "Cannot find module 'pg'"
 ```bash
-# Kill process on port 3000
-npx kill-port 3000
-
-# Atau gunakan port berbeda
-PORT=3001 npm run dev
+cd backend
+npm install pg @types/pg
 ```
 
-### Prisma migration error
+### Error: "database does not exist"
+Pastikan PostgreSQL sudah running, lalu:
 ```bash
-# Reset database
-npx prisma migrate reset
-
-# Force generate
-npx prisma generate --force
+npm run db:setup
 ```
 
-### Next.js build error
+### Error: "Port 5173 already in use"
+Ada aplikasi lain pakai port 5173. Tutup aplikasi tersebut atau:
 ```bash
-# Clean cache
-rm -rf .next
-npm run dev
+# Ganti port di frontend/vite.config.ts
 ```
 
-## License
+### Error: "Password authentication failed"
+Edit file `backend/.env`, sesuaikan password PostgreSQL:
+```
+DATABASE_URL="postgresql://postgres:PASSWORD_BENAR@localhost:5432/wdu_cms_db"
+```
 
-ISC
+---
+
+## Useful Commands
+
+```bash
+# Install ulang semua dependencies
+npm install && cd frontend && npm install && cd ../backend && npm install
+
+# Reset database (hapus semua data!)
+cd backend
+npx prisma db push --force-reset
+
+# Buka Prisma Studio (visual database)
+cd backend
+npx prisma studio
+```
+
+---
+
+## Catatan Penting
+
+1. **Jangan ubah file `.env`** di root project
+2. **Kalau ada error**, coba `npm run db:setup` dulu
+3. **Sebelum push ke git**, pastikan tidak commit file `.env`
+4. ** Untuk development**, cukup jalanin `npm run dev`
+
+---
+
+## Akun Demo
+
+Setelah instalasi, bisa login di http://localhost:5173/admin/login:
+
+| Field | Value |
+|-------|-------|
+| Email | admin@wdu.co.id |
+| Password | admin123 |
+
+---
+
+## Referensi Tambahan
+
+- **Prisma Docs:** https://www.prisma.io/docs
+- **React Docs:** https://react.dev
+- **Express Docs:** https://expressjs.com
+- **Tailwind CSS:** https://tailwindcss.com
+
+---
+
+Kalau ada yang kurang jelas atau ada error yang tidak tercantum di atas, tanya ke team lead atau senior developer.
