@@ -87,3 +87,28 @@ model SiteConfig {
   value     String
   updatedAt DateTime @updatedAt
 }
+
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  page      String
+  referrer  String?
+  userAgent String?
+  country   String?
+  city      String?
+  device    String   @default("desktop")
+  browser   String?
+  os        String?
+  isUnique  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model DailyStats {
+  id        String   @id @default(cuid())
+  date      DateTime @unique
+  pageViews Int      @default(0)
+  visitors  Int      @default(0)
+  topPages  Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 router.get('/', async (req, res) => {
   const services = await prisma.service.findMany({
@@ -27,6 +26,17 @@ router.post('/', async (req, res) => {
   res.json(service);
 });
 
+// IMPORTANT: /reorder must come BEFORE /:id to avoid route conflicts!
+router.put('/reorder', async (req, res) => {
+  const { orders } = req.body;
+  await Promise.all(
+    orders.map((item: { id: string; order: number }) =>
+      prisma.service.update({ where: { id: item.id }, data: { order: item.order } })
+    )
+  );
+  res.json({ success: true });
+});
+
 router.put('/:id', async (req, res) => {
   const { title, description, icon, isActive } = req.body;
   const service = await prisma.service.update({
@@ -38,16 +48,6 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   await prisma.service.delete({ where: { id: req.params.id } });
-  res.json({ success: true });
-});
-
-router.patch('/reorder', async (req, res) => {
-  const { orders } = req.body;
-  await Promise.all(
-    orders.map((item: { id: string; order: number }) =>
-      prisma.service.update({ where: { id: item.id }, data: { order: item.order } })
-    )
-  );
   res.json({ success: true });
 });
 

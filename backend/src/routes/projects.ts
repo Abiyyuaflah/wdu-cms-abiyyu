@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 router.get('/', async (req, res) => {
   const projects = await prisma.project.findMany({
@@ -41,6 +40,16 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   await prisma.project.delete({ where: { id: req.params.id } });
+  res.json({ success: true });
+});
+
+router.patch('/reorder', async (req, res) => {
+  const { orders } = req.body;
+  await Promise.all(
+    orders.map((item: { id: string; order: number }) =>
+      prisma.project.update({ where: { id: item.id }, data: { order: item.order } })
+    )
+  );
   res.json({ success: true });
 });
 

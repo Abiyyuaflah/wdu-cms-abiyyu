@@ -8,7 +8,7 @@ async function initDatabase() {
     host: 'localhost',
     port: 5432,
     user: 'postgres',
-    password: 'Nasigoreng123@',
+    password: '123456',
     database: DEFAULT_DB,
   });
 
@@ -18,7 +18,7 @@ async function initDatabase() {
       "SELECT 1 FROM pg_database WHERE datname = $1",
       [TARGET_DB]
     );
-    
+
     if (result.rows.length === 0) {
       console.log(`Creating database "${TARGET_DB}"...`);
       await client.query(`CREATE DATABASE ${TARGET_DB}`);
