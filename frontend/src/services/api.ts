@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.wdu.co.id/api/v1';
+
 const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -22,10 +24,10 @@ api.interceptors.response.use(
       const refreshToken = localStorage.getItem('refreshToken');
       if (refreshToken) {
         try {
-          const { data } = await axios.post('/api/v1/auth/refresh', { refreshToken });
-          localStorage.setItem('accessToken', data.accessToken);
-          error.config.headers.Authorization = `Bearer ${data.accessToken}`;
-          return axios(error.config);
+          const { data } = await axios.post(`${API_BASE_URL}/auth/refresh`, { refresh_token: refreshToken });
+          localStorage.setItem('accessToken', data.access_token);
+          error.config.headers.Authorization = `Bearer ${data.access_token}`;
+          return api(error.config);
         } catch {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
