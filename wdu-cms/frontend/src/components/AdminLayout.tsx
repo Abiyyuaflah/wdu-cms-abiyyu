@@ -450,6 +450,17 @@ export default function AdminLayout() {
                 <span className="material-symbols-outlined text-lg">security</span>
                 Security
               </NavLink>
+              <NavLink
+                to="/admin/config/seo"
+                className={({ isActive }) => `px-3 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-3 ${
+                  isActive 
+                    ? 'bg-[#6ab149] text-white' 
+                    : 'text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-white/5 hover:text-on-surface'
+                }`}
+              >
+                <span className="material-symbols-outlined text-lg">search</span>
+                Meta SEO
+              </NavLink>
             </nav>
           </div>
         )}

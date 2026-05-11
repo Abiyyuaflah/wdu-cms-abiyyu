@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   DragHandleDots2Icon, 
   Pencil1Icon, 
@@ -27,6 +28,62 @@ export default function AdminPages() {
   const [pageData, setPageData] = useState<Record<string, PageSection[]>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [showEditModal, setShowEditModal] = useState<PageSection | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  // Animation variants
+  const containerVariants: any = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08, delayChildren: 0.05 }
+    },
+    exit: {
+      opacity: 0,
+      transition: { staggerChildren: 0.03, staggerDirection: -1 }
+    }
+  };
+
+  const itemVariants: any = {
+    hidden: { opacity: 0, y: 30, scale: 0.97 },
+    visible: {
+      opacity: 1, y: 0, scale: 1,
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as any }
+    },
+    exit: {
+      opacity: 0, y: -15, scale: 0.97,
+      transition: { duration: 0.3 }
+    }
+  };
+
+  const modalBackdropVariants: any = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.3 } },
+    exit: { opacity: 0, transition: { duration: 0.2 } }
+  };
+
+  const modalPanelVariants: any = {
+    hidden: { opacity: 0, scale: 0.92, y: 30 },
+    visible: { 
+      opacity: 1, scale: 1, y: 0,
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as any }
+    },
+    exit: { 
+      opacity: 0, scale: 0.95, y: 10,
+      transition: { duration: 0.2, ease: 'easeIn' }
+    }
+  };
+
+  const toastVariants: any = {
+    hidden: { opacity: 0, x: 80, scale: 0.95 },
+    visible: { 
+      opacity: 1, x: 0, scale: 1,
+      transition: { type: 'spring', stiffness: 400, damping: 30 }
+    },
+    exit: { 
+      opacity: 0, x: 80, scale: 0.95,
+      transition: { duration: 0.2, ease: 'easeIn' }
+    }
+  };
 
   // Default data structure dengan konten asli
   const defaultPageData: Record<string, PageSection[]> = {
@@ -242,16 +299,155 @@ export default function AdminPages() {
       }
     ],
     'Pengalaman': [
-      { id: 'p1', name: 'Hero Experience', type: 'Hero', status: 'Published' },
-      { id: 'p2', name: 'Intro Pengalaman', type: 'Intro', status: 'Published' },
-      { id: 'p3', name: 'Klien Unggulan 2024', type: 'Clients', status: 'Published' },
-      { id: 'p4', name: 'Timeline Perjalanan', type: 'Timeline', status: 'Published' },
-      { id: 'p5', name: 'Monolith Strategis', type: 'Editorial', status: 'Published' }
+      {
+        id: 'p2',
+        name: 'Intro Pengalaman',
+        type: 'Intro',
+        status: 'Published',
+        content: {
+          badge: 'Pengalaman',
+          title: 'Portofolio & Keberhasilan',
+          description: 'Kami telah berhasil menyelesaikan berbagai proyek strategis untuk berbagai instansi pemerintah dan perusahaan swasta.',
+          image: 'https://wahanadata.co.id/wp-content/uploads/2025/01/34695135-c70d-4d76-92d5-10c39eb5390f.jpg'
+        }
+      },
+      {
+        id: 'p3',
+        name: 'Klien Unggulan 2024',
+        type: 'Clients',
+        status: 'Published',
+        content: {
+          badge: 'Leading Partners',
+          title: '2024',
+          clients: [
+            { name: 'BPK', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/bpk-150x150.png' },
+            { name: 'BPOM', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/bpom-1-300x205.png' },
+            { name: 'BKPM', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/bkpm-1-300x205.png' },
+            { name: 'Kominfo', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/Kominfo-e1737704377593-251x300.png' },
+            { name: 'Paljaya', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/paljaya-300x300.png' },
+          ]
+        }
+      },
+      {
+        id: 'p4',
+        name: 'Timeline Perjalanan',
+        type: 'Timeline',
+        status: 'Published',
+        content: {
+          title: 'Perjalanan Kami',
+          entries: [
+            {
+              year: '2023',
+              logos: [
+                { name: 'BPK', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/bpk-square-300x300.png', isActive: true },
+                { name: 'STM Yogya', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/stm-yogya-square-300x300.png', isActive: true },
+                { name: 'Transpakuan', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/transpakuan-square-resized-300x300.png', isActive: true },
+                { name: 'Paljaya', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/paljaya-300x300.png', isActive: true },
+                { name: 'Kominfo', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/Kominfo-e1737704377593-251x300.png', isActive: true },
+              ]
+            },
+            {
+              year: '2022',
+              logos: [
+                { name: 'BUMN', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/bumn-square-300x300.png', isActive: true },
+                { name: 'Jakarta', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/jakarta-square-300x300.png', isActive: true },
+                { name: 'KPK', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/kpk-square-300x300.png', isActive: true },
+                { name: 'BPK', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/bpk-square-300x300.png', isActive: true },
+                { name: 'Perpusnas', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/perpusnas-square-300x300.png', isActive: true },
+                { name: 'Blora', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/blora-square-300x300.png', isActive: true },
+                { name: 'Injiniring', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/injiniring-square-300x300.png', isActive: true },
+                { name: 'Pakuan Jaya', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/pakuan-jaya-square-300x300.png', isActive: true },
+                { name: 'Kominfo', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/kominfo-old-square-300x300.png', isActive: true },
+                { name: 'BKPM', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/bkpm-square-300x300.png', isActive: true },
+              ]
+            },
+            {
+              year: '2021',
+              logos: [
+                { name: 'BPOM', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/bpom-1-300x205.png', isActive: true },
+                { name: 'Kominfo', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/Kominfo-e1737704377593-251x300.png', isActive: true },
+                { name: 'BPK', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/bpk-square-300x300.png', isActive: true },
+                { name: 'KPK', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/kpk-square-300x300.png', isActive: true },
+                { name: 'Kemendes', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/kemendes-square-300x300.png', isActive: true },
+                { name: 'Pakuan Jaya', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/pakuan-jaya-square-300x300.png', isActive: true },
+                { name: 'BKPM', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/bkpm-square-300x300.png', isActive: true },
+              ]
+            },
+            {
+              year: '2020',
+              logos: [
+                { name: 'BPK', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/bpk-150x150.png', isActive: true },
+                { name: 'Kemendes', img: 'https://wahanadata.co.id/wp-content/uploads/2025/01/kemendes-square-300x300.png', isActive: true },
+              ]
+            },
+          ]
+        }
+      },
+      {
+        id: 'p5',
+        name: 'Monolith Strategis',
+        type: 'Editorial',
+        status: 'Published',
+        content: {
+          headline: 'Strategic Excellence',
+          paragraph1: 'Dengan komitmen yang kuat terhadap inovasi dan keakuratan data, Wahana Data Utama siap menjadi mitra terpercaya bagi bisnis dan organisasi dalam mengambil keputusan berbasis informasi. Di era digital yang semakin kompleks, kami terus berinovasi dengan teknologi terkini untuk menghadirkan solusi yang relevan, akurat, dan berdampak nyata. Kepercayaan klien adalah prioritas utama kami, dan dengan pengalaman bertahun-tahun serta tim profesional yang andal, kami berkomitmen untuk membantu berbagai sektor mengoptimalkan strategi bisnis mereka.',
+          paragraph2: 'Bersama Wahana Data Utama, Anda tidak hanya mendapatkan data, tetapi juga wawasan strategis yang mendorong pertumbuhan dan kesuksesan jangka panjang. Mari melangkah ke masa depan dengan strategi yang lebih cerdas, efisien, dan berdaya saing tinggi!',
+          bgImage: 'https://wahanadata.co.id/wp-content/uploads/2025/01/34695135-c70d-4d76-92d5-10c39eb5390f.jpg'
+        }
+      }
     ],
     'Kontak': [
-      { id: 'k1', name: 'Hero Kontak', type: 'Hero', status: 'Published' },
-      { id: 'k2', name: 'Form & Info Kontak', type: 'Form', status: 'Published' },
-      { id: 'k3', name: 'Peta Lokasi (Google Maps)', type: 'Map', status: 'Published' }
+      {
+        id: 'k1',
+        name: 'Hero Kontak',
+        type: 'Hero',
+        status: 'Published',
+        content: {
+          badge: 'Hubungi Kami',
+          headline: 'Siap\nMembantu\nAnda',
+          description: 'Jangan ragu untuk menghubungi kami. Tim profesional kami siap memberikan konsultasi dan menjawab pertanyaan Anda.',
+          stats: [
+            { value: '24/7', label: 'Dukungan' },
+            { value: '< 1 Jam', label: 'Respon Time' },
+            { value: '100%', label: 'Professional' },
+          ],
+          bgImage: 'https://wahanadata.co.id/wp-content/uploads/elementor/thumbs/kontak-header-r02xh9skmo5ipym1j4rohxyhov5sjnraxkbp516srk.jpg',
+          ctaText: 'Hubungi Sekarang',
+          ctaLink: 'https://wa.me/62881012394686'
+        }
+      },
+      {
+        id: 'k2',
+        name: 'Form & Info Kontak',
+        type: 'Form',
+        status: 'Published',
+        content: {
+          title: 'Hubungi Kami',
+          subtitle: 'Dapatkan segala informasi dengan menghubungi kami!',
+          contactInfo: [
+            { title: 'Alamat Kantor', icon: 'location_on', content: 'Blok AE No. 01, Jl. Terapi Raya, RT 03/19, Menteng. Kec. Bogor Barat, Kota Bogor, Jawa Barat 1611' },
+            { title: 'Email Resmi', icon: 'alternate_email', content: 'wahanadata@yahoo.com\nit.support@wahanadata.co.id' },
+            { title: 'Layanan Telepon', icon: 'headset_mic', content: '(0251) 7564 109\n+62 812 8740 8806' },
+          ],
+          image: 'https://wahanadata.co.id/wp-content/uploads/2025/01/kontak-modified-768x474.png',
+          formTitle: 'Kami dengan senang hati siap membahas kebutuhan Anda. Silakan hubungi kami melalui informasi kontak di bawah ini.',
+          apiEndpoint: '/api/v1/contact'
+        }
+      },
+      {
+        id: 'k3',
+        name: 'Peta Lokasi (Google Maps)',
+        type: 'Map',
+        status: 'Published',
+        content: {
+          title: 'Kunjungi Kami',
+          subtitle: 'Kami berlokasi di pusat strategis Bogor Barat.',
+          mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.325583333333!2d106.7764606!3d-6.5776568!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69c45a76630bef%3A0xcc4ae8ae1ccf277f!2sPT.%20Wahana%20Data%20Utama!5e0!3m2!1sen!2sid!4v1700000000000',
+          mapLabel: 'Bogor Barat',
+          ctaText: 'Buka Navigasi',
+          ctaLink: 'https://maps.google.com/?q=Wahana+Data+Utama+Bogor'
+        }
+      }
     ]
   };
 
@@ -315,12 +511,114 @@ export default function AdminPages() {
     setIsSaving(true);
     localStorage.setItem('wdu_admin_sections', JSON.stringify(pageData));
     
+    // Sync Pengalaman data ke wdu_admin_settings untuk ExperiencePage
+    const pengalamanSections = pageData['Pengalaman'] || [];
+    const introSection = pengalamanSections.find(s => s.id === 'p2');
+    const clientsSection = pengalamanSections.find(s => s.id === 'p3');
+    const timelineSection = pengalamanSections.find(s => s.id === 'p4');
+    
+    const existingSettings = (() => {
+      try {
+        return JSON.parse(localStorage.getItem('wdu_admin_settings') || '{}');
+      } catch { return {}; }
+    })();
+    
+    // Map Hero Experience dari Intro (p2) — p1 sudah dihapus
+    if (introSection?.content) {
+      existingSettings.heroes = existingSettings.heroes || {};
+      existingSettings.heroes.experience = {
+        badgeText: introSection.content.badge || 'Pengalaman',
+        headline: [introSection.content.title || 'Portofolio & Keberhasilan'],
+        description: introSection.content.description || '',
+        stats: [],
+        bgImage: introSection.content.image || '',
+        ctaText: '',
+        ctaLink: ''
+      };
+    }
+
+    // Map Timeline (p3 Klien 2024 + p4 Timeline Perjalanan)
+    existingSettings.generalSetting = existingSettings.generalSetting || {};
+    const timeline: any[] = [];
+    
+    // Add 2024 entry from Clients section
+    if (clientsSection?.content?.clients) {
+      timeline.push({
+        year: clientsSection.content.title || '2024',
+        logos: clientsSection.content.clients.map((c: any) => ({ name: c.name, img: c.img, isActive: true }))
+      });
+    }
+    
+    // Add timeline entries from Timeline section
+    if (timelineSection?.content?.entries) {
+      timelineSection.content.entries.forEach((entry: any) => {
+        if (!timeline.find((t: any) => t.year === entry.year)) {
+          timeline.push({
+            year: entry.year,
+            logos: entry.logos.map((l: any) => ({ name: l.name, img: l.img, isActive: l.isActive !== false }))
+          });
+        }
+      });
+    }
+    
+    // Sort descending by year
+    timeline.sort((a: any, b: any) => parseInt(b.year) - parseInt(a.year));
+    existingSettings.generalSetting.timeline = timeline;
+    
+    // Sync Kontak data ke wdu_admin_settings untuk ContactPage
+    const kontakSections = pageData['Kontak'] || [];
+    const heroKontak = kontakSections.find(s => s.id === 'k1');
+    const formSection = kontakSections.find(s => s.id === 'k2');
+    const mapSection = kontakSections.find(s => s.id === 'k3');
+    
+    // Map Hero Kontak
+    if (heroKontak?.content) {
+      existingSettings.heroes = existingSettings.heroes || {};
+      existingSettings.heroes.contact = {
+        badgeText: heroKontak.content.badge || 'Hubungi Kami',
+        headline: (heroKontak.content.headline || 'Siap Membantu Anda').split('\n').filter((l: string) => l.trim() !== ''),
+        description: heroKontak.content.description || '',
+        stats: heroKontak.content.stats || [],
+        bgImage: heroKontak.content.bgImage || '',
+        ctaText: heroKontak.content.ctaText || '',
+        ctaLink: heroKontak.content.ctaLink || ''
+      };
+    }
+    
+    // Map Form & Info
+    existingSettings.contactPage = existingSettings.contactPage || {};
+    if (formSection?.content) {
+      existingSettings.contactPage.form = {
+        title: formSection.content.title || '',
+        subtitle: formSection.content.subtitle || '',
+        contactInfo: formSection.content.contactInfo || [],
+        image: formSection.content.image || '',
+        formTitle: formSection.content.formTitle || '',
+        apiEndpoint: formSection.content.apiEndpoint || '/api/v1/contact'
+      };
+    }
+    
+    // Map Peta Lokasi
+    if (mapSection?.content) {
+      existingSettings.contactPage.map = {
+        title: mapSection.content.title || '',
+        subtitle: mapSection.content.subtitle || '',
+        mapSrc: mapSection.content.mapSrc || '',
+        mapLabel: mapSection.content.mapLabel || '',
+        ctaText: mapSection.content.ctaText || '',
+        ctaLink: mapSection.content.ctaLink || ''
+      };
+    }
+    
+    localStorage.setItem('wdu_admin_settings', JSON.stringify(existingSettings));
+    
     // Trigger storage event for other tabs
     window.dispatchEvent(new Event('storage'));
     
     setTimeout(() => {
       setIsSaving(false);
-      alert('Semua perubahan berhasil disimpan dan disinkronkan!');
+      setToast({ message: 'Semua perubahan berhasil disimpan!', type: 'success' });
+      setTimeout(() => setToast(null), 3000);
     }, 800);
   };
 
@@ -364,105 +662,165 @@ export default function AdminPages() {
             <div className="flex gap-4">
               <div className="flex bg-white p-1 rounded-2xl border border-gray-200 shadow-sm mr-2">
                 {sidebarItems.map((item) => (
-                  <button
+                  <motion.button
                     key={item.name}
                     onClick={() => setActivePage(item.name)}
-                    className={`px-6 py-2.5 rounded-xl text-xs font-black transition-all uppercase tracking-widest ${
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className={`px-6 py-2.5 rounded-xl text-xs font-black transition-colors duration-200 uppercase tracking-widest ${
                       activePage === item.name 
                       ? 'bg-[#6ab149] text-white shadow-lg shadow-[#6ab149]/20' 
                       : 'text-gray-400 hover:text-gray-600'
                     }`}
                   >
                     {item.name}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
-              <button 
+              <motion.button 
                 onClick={handlePreview}
-                className="bg-white border border-gray-200 hover:bg-gray-50 px-6 py-3 rounded-2xl text-xs font-black text-gray-700 transition-all shadow-sm flex items-center gap-2 uppercase tracking-widest"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                className="bg-white border border-gray-200 hover:bg-gray-50 px-6 py-3 rounded-2xl text-xs font-black text-gray-700 transition-colors duration-200 shadow-sm flex items-center gap-2 uppercase tracking-widest"
               >
-                <EyeOpenIcon /> Preview
-              </button>
+                <motion.span
+                  animate={{ rotate: [0, 0, 0] }}
+                  whileHover={{ rotate: [0, -10, 10, -10, 0], transition: { duration: 0.5 } }}
+                >
+                  <EyeOpenIcon />
+                </motion.span>
+                Preview
+              </motion.button>
             </div>
           </div>
 
           {/* Bento Grid Sections */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {(pageData[activePage] || []).map((section) => (
-              <div 
-                key={section.id} 
-                className={`group relative bg-white border p-6 rounded-[24px] transition-all duration-300 shadow-sm hover:shadow-md ${
-                  section.status === 'Draft' ? 'border-orange-200 bg-orange-50/10' : 'border-gray-200'
-                }`}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activePage}
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="grid grid-cols-1 md:grid-cols-2 gap-5"
+            >
+              {(pageData[activePage] || []).map((section) => (
+                <motion.div
+                  key={section.id}
+                  variants={itemVariants}
+                  layout
+                  whileHover={{ y: -4, boxShadow: '0 20px 40px -12px rgba(0,0,0,0.1)' }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  className={`group relative bg-white border p-6 rounded-[24px] shadow-sm hover:shadow-xl hover:border-[#6ab149]/20 ${
+                    section.status === 'Draft' ? 'border-orange-200 bg-orange-50/10' : 'border-gray-200'
+                  }`}
+                >
+                  {/* Drag handle dots */}
+                  <div className="absolute top-6 right-6 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab">
+                    <DragHandleDots2Icon className="w-5 h-5" />
+                  </div>
+
+                  <div className="flex flex-col h-full">
+                    <div className="flex items-center gap-3 mb-4">
+                      <motion.div
+                        whileHover={{ rotate: [0, -10, 10, -10, 0], transition: { duration: 0.5 } }}
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          section.status === 'Published' ? 'bg-[#6ab149]/10 text-[#6ab149]' : 'bg-orange-500/10 text-orange-500'
+                        }`}
+                      >
+                        <LayersIcon />
+                      </motion.div>
+                      <div>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                          section.status === 'Published' ? 'bg-[#6ab149]/10 text-[#6ab149]' : 'bg-orange-500/10 text-orange-500'
+                        }`}>
+                          {section.status}
+                        </span>
+                        <h3 className="text-lg font-bold mt-0.5 text-gray-900">{section.name}</h3>
+                      </div>
+                    </div>
+
+                    <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+                      Mengatur konten visual dan teks untuk tipe <span className="font-semibold">{section.type}</span> pada halaman {activePage}.
+                    </p>
+
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                      <div className="flex gap-2">
+                        <motion.button
+                          whileHover={{ scale: 1.08, backgroundColor: '#6ab149', color: '#fff' }}
+                          whileTap={{ scale: 0.92 }}
+                          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                          onClick={() => setShowEditModal(section)}
+                          className="p-2.5 rounded-xl bg-gray-50 text-gray-600"
+                        >
+                          <Pencil1Icon className="w-4 h-4" />
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.08 }}
+                          whileTap={{ scale: 0.92 }}
+                          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                          onClick={() => handleToggleStatus(activePage, section.id)}
+                          className="p-2.5 rounded-xl bg-gray-50 text-gray-600"
+                          title={section.status === 'Published' ? 'Set to Draft' : 'Set to Published'}
+                        >
+                          {section.status === 'Published' ? <EyeOpenIcon className="w-4 h-4 text-[#6ab149]" /> : <EyeNoneIcon className="w-4 h-4" />}
+                        </motion.button>
+                      </div>
+                      <motion.button
+                        whileHover={{ scale: 1.08, backgroundColor: '#fee2e2', color: '#ef4444' }}
+                        whileTap={{ scale: 0.92 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                        onClick={() => handleDelete(activePage, section.id)}
+                        className="p-2.5 rounded-xl bg-gray-50 text-red-400"
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+
+              {/* Add Placeholder Card */}
+              <motion.button
+                variants={itemVariants}
+                whileHover={{ scale: 1.02, borderColor: 'rgba(106,177,73,0.4)' }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                className="border-2 border-dashed border-gray-200 rounded-[24px] flex flex-col items-center justify-center p-12 bg-transparent hover:bg-gray-50 hover:border-[#6ab149]/30 transition-colors duration-300 group"
               >
-                {/* Drag handle dots */}
-                <div className="absolute top-6 right-6 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab">
-                  <DragHandleDots2Icon className="w-5 h-5" />
-                </div>
-
-                <div className="flex flex-col h-full">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      section.status === 'Published' ? 'bg-[#6ab149]/10 text-[#6ab149]' : 'bg-orange-500/10 text-orange-500'
-                    }`}>
-                       <LayersIcon />
-                    </div>
-                    <div>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        section.status === 'Published' ? 'bg-[#6ab149]/10 text-[#6ab149]' : 'bg-orange-500/10 text-orange-500'
-                      }`}>
-                        {section.status}
-                      </span>
-                      <h3 className="text-lg font-bold mt-0.5 text-gray-900">{section.name}</h3>
-                    </div>
-                  </div>
-
-                  <p className="text-gray-500 text-sm mb-8 leading-relaxed">
-                    Mengatur konten visual dan teks untuk tipe <span className="font-semibold">{section.type}</span> pada halaman {activePage}.
-                  </p>
-
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={() => setShowEditModal(section)}
-                        className="p-2.5 rounded-xl bg-gray-50 hover:bg-[#6ab149] hover:text-white transition-all group/btn text-gray-600"
-                      >
-                        <Pencil1Icon className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleToggleStatus(activePage, section.id)}
-                        className="p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all text-gray-600"
-                        title={section.status === 'Published' ? 'Set to Draft' : 'Set to Published'}
-                      >
-                        {section.status === 'Published' ? <EyeOpenIcon className="w-4 h-4 text-[#6ab149]" /> : <EyeNoneIcon className="w-4 h-4" />}
-                      </button>
-                    </div>
-                    <button 
-                      onClick={() => handleDelete(activePage, section.id)}
-                      className="p-2.5 rounded-xl bg-gray-50 hover:bg-red-100 text-red-400 hover:text-red-500 transition-all"
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {/* Add Placeholder Card */}
-            <button className="border-2 border-dashed border-gray-200 rounded-[24px] flex flex-col items-center justify-center p-12 bg-transparent hover:bg-gray-50 hover:border-[#6ab149]/30 transition-all group">
-              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-[#6ab149]/10 transition-all">
-                <span className="text-2xl text-gray-400 group-hover:text-[#6ab149]">+</span>
-              </div>
-              <p className="text-gray-500 font-medium text-sm">Add custom section here</p>
-            </button>
-          </div>
+                <motion.div
+                  whileHover={{ rotate: 90, scale: 1.1 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3 group-hover:bg-[#6ab149]/10"
+                >
+                  <span className="text-2xl text-gray-400 group-hover:text-[#6ab149]">+</span>
+                </motion.div>
+                <p className="text-gray-500 font-medium text-sm">Add custom section here</p>
+              </motion.button>
+            </motion.div>
+          </AnimatePresence>
 
         </div>
       </div>
 
-      {showEditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-md">
-          <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <AnimatePresence>
+        {showEditModal && (
+          <motion.div
+            variants={modalBackdropVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/70 backdrop-blur-xl"
+          >
+          <motion.div
+            variants={modalPanelVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden"
+          >
             {/* Header Modal */}
             <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50/80">
               <div className="flex items-center gap-4">
@@ -1357,16 +1715,29 @@ export default function AdminPages() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Quote / Description</label>
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Paragraph 1</label>
                       <textarea 
-                        value={showEditModal.content?.quote || ''}
+                        value={showEditModal.content?.paragraph1 || ''}
                         onChange={(e) => {
                           const newData = { ...pageData };
-                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), quote: e.target.value } } : s);
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), paragraph1: e.target.value } } : s);
                           setPageData(newData);
-                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), quote: e.target.value } });
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), paragraph1: e.target.value } });
                         }}
-                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none min-h-[100px] italic font-medium" 
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none min-h-[120px] font-medium leading-relaxed" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Paragraph 2</label>
+                      <textarea 
+                        value={showEditModal.content?.paragraph2 || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), paragraph2: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), paragraph2: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none min-h-[120px] font-medium leading-relaxed" 
                       />
                     </div>
                     <div className="space-y-2">
@@ -1382,6 +1753,305 @@ export default function AdminPages() {
                         }}
                         className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none" 
                       />
+                    </div>
+                  </div>
+                )}
+
+                {/* IF INTRO */}
+                {showEditModal.type === 'Intro' && (
+                  <div className="space-y-6 animate-in slide-in-from-top-2">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Badge Text</label>
+                      <input 
+                        type="text" 
+                        value={showEditModal.content?.badge || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), badge: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), badge: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none font-bold text-[#6ab149]" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Title</label>
+                      <textarea 
+                        value={showEditModal.content?.title || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), title: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), title: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none font-black min-h-[60px]" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Description</label>
+                      <textarea 
+                        value={showEditModal.content?.description || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), description: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), description: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none min-h-[100px] font-medium leading-relaxed" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Side Image URL</label>
+                      <input 
+                        type="text" 
+                        value={showEditModal.content?.image || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), image: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), image: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none" 
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* IF CLIENTS */}
+                {showEditModal.type === 'Clients' && (
+                  <div className="space-y-6 animate-in slide-in-from-top-2">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Badge Text</label>
+                      <input 
+                        type="text" 
+                        value={showEditModal.content?.badge || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), badge: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), badge: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none font-bold text-[#6ab149]" 
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Title</label>
+                        <input 
+                          type="text" 
+                          value={showEditModal.content?.title || ''}
+                          onChange={(e) => {
+                            const newData = { ...pageData };
+                            newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), title: e.target.value } } : s);
+                            setPageData(newData);
+                            setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), title: e.target.value } });
+                          }}
+                          className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none font-black" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-4 pt-4 border-t border-gray-100">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Client Logos</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        {(showEditModal.content?.clients || []).map((client: any, idx: number) => (
+                          <div key={idx} className="p-3 bg-gray-50 rounded-2xl border border-gray-100 space-y-2 group relative">
+                            <button 
+                              onClick={() => {
+                                const newClients = [...showEditModal.content.clients];
+                                newClients.splice(idx, 1);
+                                const newData = { ...pageData };
+                                newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...s.content, clients: newClients } } : s);
+                                setPageData(newData);
+                                setShowEditModal({ ...showEditModal, content: { ...showEditModal.content, clients: newClients } });
+                              }}
+                              className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all z-10"
+                            >
+                              <TrashIcon className="w-3 h-3" />
+                            </button>
+                            <div className="h-14 flex items-center justify-center bg-white rounded-xl border p-2">
+                              <img src={client.img} className="max-h-full max-w-full object-contain grayscale group-hover:grayscale-0 transition-all" alt="" />
+                            </div>
+                            <input 
+                              type="text" 
+                              value={client.name} 
+                              onChange={(e) => {
+                                const newClients = [...showEditModal.content.clients];
+                                newClients[idx].name = e.target.value;
+                                const newData = { ...pageData };
+                                newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...s.content, clients: newClients } } : s);
+                                setPageData(newData);
+                                setShowEditModal({ ...showEditModal, content: { ...showEditModal.content, clients: newClients } });
+                              }}
+                              className="w-full text-[9px] font-black outline-none bg-transparent text-center" 
+                              placeholder="Client Name" 
+                            />
+                            <input 
+                              type="text" 
+                              value={client.img} 
+                              onChange={(e) => {
+                                const newClients = [...showEditModal.content.clients];
+                                newClients[idx].img = e.target.value;
+                                const newData = { ...pageData };
+                                newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...s.content, clients: newClients } } : s);
+                                setPageData(newData);
+                                setShowEditModal({ ...showEditModal, content: { ...showEditModal.content, clients: newClients } });
+                              }}
+                              className="w-full text-[8px] text-gray-400 outline-none bg-transparent truncate text-center" 
+                              placeholder="Logo URL" 
+                            />
+                          </div>
+                        ))}
+                        <button 
+                          onClick={() => {
+                            const newClients = [...(showEditModal.content?.clients || []), { name: 'New Client', img: '' }];
+                            const newData = { ...pageData };
+                            newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), clients: newClients } } : s);
+                            setPageData(newData);
+                            setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), clients: newClients } });
+                          }}
+                          className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl p-4 text-gray-400 hover:border-[#6ab149] hover:text-[#6ab149] transition-all"
+                        >
+                          <span className="text-xl">+</span>
+                          <span className="text-[9px] font-bold">Add Client</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* IF TIMELINE */}
+                {showEditModal.type === 'Timeline' && (
+                  <div className="space-y-6 animate-in slide-in-from-top-2">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Section Title</label>
+                      <input 
+                        type="text" 
+                        value={showEditModal.content?.title || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), title: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), title: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none font-bold" 
+                      />
+                    </div>
+                    <div className="space-y-4 pt-4 border-t border-gray-100">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Timeline Entries (Years)</label>
+                      <div className="space-y-6">
+                        {(showEditModal.content?.entries || []).map((entry: any, yearIdx: number) => (
+                          <div key={yearIdx} className="p-5 bg-gray-50 rounded-2xl border border-gray-100 space-y-4 group relative">
+                            <button 
+                              onClick={() => {
+                                const newEntries = [...showEditModal.content.entries];
+                                newEntries.splice(yearIdx, 1);
+                                const newData = { ...pageData };
+                                newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...s.content, entries: newEntries } } : s);
+                                setPageData(newData);
+                                setShowEditModal({ ...showEditModal, content: { ...showEditModal.content, entries: newEntries } });
+                              }}
+                              className="absolute top-3 right-3 p-1.5 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all shadow-lg z-10"
+                            >
+                              <TrashIcon className="w-3 h-3" />
+                            </button>
+                            <div className="flex items-center gap-3">
+                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Year</span>
+                              <input 
+                                type="text" 
+                                value={entry.year} 
+                                onChange={(e) => {
+                                  const newEntries = [...showEditModal.content.entries];
+                                  newEntries[yearIdx].year = e.target.value;
+                                  const newData = { ...pageData };
+                                  newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...s.content, entries: newEntries } } : s);
+                                  setPageData(newData);
+                                  setShowEditModal({ ...showEditModal, content: { ...showEditModal.content, entries: newEntries } });
+                                }}
+                                className="px-4 py-2 rounded-xl border border-gray-200 bg-white outline-none font-black text-lg w-24 text-center" 
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Client Logos</label>
+                              <div className="grid grid-cols-3 gap-2">
+                                {(entry.logos || []).map((logo: any, logoIdx: number) => (
+                                  <div key={logoIdx} className="p-2 bg-white rounded-xl border border-gray-100 space-y-1 group/logo relative">
+                                    <button 
+                                      onClick={() => {
+                                        const newEntries = [...showEditModal.content.entries];
+                                        newEntries[yearIdx].logos.splice(logoIdx, 1);
+                                        const newData = { ...pageData };
+                                        newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...s.content, entries: newEntries } } : s);
+                                        setPageData(newData);
+                                        setShowEditModal({ ...showEditModal, content: { ...showEditModal.content, entries: newEntries } });
+                                      }}
+                                      className="absolute -top-1.5 -right-1.5 p-0.5 bg-red-500 text-white rounded-full opacity-0 group-hover/logo:opacity-100 transition-all z-10"
+                                    >
+                                      <Cross1Icon className="w-2.5 h-2.5" />
+                                    </button>
+                                    <div className="h-8 flex items-center justify-center">
+                                      <img src={logo.img} className="max-h-full max-w-full object-contain" alt="" />
+                                    </div>
+                                    <input 
+                                      type="text" 
+                                      value={logo.name} 
+                                      onChange={(e) => {
+                                        const newEntries = [...showEditModal.content.entries];
+                                        newEntries[yearIdx].logos[logoIdx].name = e.target.value;
+                                        const newData = { ...pageData };
+                                        newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...s.content, entries: newEntries } } : s);
+                                        setPageData(newData);
+                                        setShowEditModal({ ...showEditModal, content: { ...showEditModal.content, entries: newEntries } });
+                                      }}
+                                      className="w-full text-[8px] font-bold outline-none bg-transparent text-center" 
+                                      placeholder="Name" 
+                                    />
+                                    <input 
+                                      type="text" 
+                                      value={logo.img} 
+                                      onChange={(e) => {
+                                        const newEntries = [...showEditModal.content.entries];
+                                        newEntries[yearIdx].logos[logoIdx].img = e.target.value;
+                                        const newData = { ...pageData };
+                                        newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...s.content, entries: newEntries } } : s);
+                                        setPageData(newData);
+                                        setShowEditModal({ ...showEditModal, content: { ...showEditModal.content, entries: newEntries } });
+                                      }}
+                                      className="w-full text-[7px] text-gray-400 outline-none bg-transparent truncate text-center" 
+                                      placeholder="Logo URL" 
+                                    />
+                                  </div>
+                                ))}
+                                <button 
+                                  onClick={() => {
+                                    const newEntries = [...showEditModal.content.entries];
+                                    newEntries[yearIdx].logos.push({ name: 'New Client', img: '', isActive: true });
+                                    const newData = { ...pageData };
+                                    newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...s.content, entries: newEntries } } : s);
+                                    setPageData(newData);
+                                    setShowEditModal({ ...showEditModal, content: { ...showEditModal.content, entries: newEntries } });
+                                  }}
+                                  className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl p-2 text-gray-400 hover:border-[#6ab149] hover:text-[#6ab149] transition-all min-h-[80px]"
+                                >
+                                  <span className="text-lg">+</span>
+                                  <span className="text-[8px] font-bold">Add Logo</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        <button 
+                          onClick={() => {
+                            const newEntries = [...(showEditModal.content?.entries || []), { year: String(new Date().getFullYear()), logos: [] }];
+                            const newData = { ...pageData };
+                            newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), entries: newEntries } } : s);
+                            setPageData(newData);
+                            setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), entries: newEntries } });
+                          }}
+                          className="w-full py-3 border-2 border-dashed border-gray-200 rounded-2xl text-[10px] font-bold text-gray-400 hover:border-[#6ab149] hover:text-[#6ab149] transition-all"
+                        >
+                          + Add New Year Entry
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1471,35 +2141,288 @@ export default function AdminPages() {
                   </div>
                 )}
 
+                {/* IF FORM */}
+                {showEditModal.type === 'Form' && (
+                  <div className="space-y-6 animate-in slide-in-from-top-2">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Section Title</label>
+                      <input 
+                        type="text" 
+                        value={showEditModal.content?.title || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), title: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), title: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none font-bold" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Subtitle</label>
+                      <textarea 
+                        value={showEditModal.content?.subtitle || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), subtitle: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), subtitle: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none min-h-[80px] font-medium" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Form Title (above form)</label>
+                      <textarea 
+                        value={showEditModal.content?.formTitle || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), formTitle: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), formTitle: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none min-h-[60px] font-medium" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Decorative Image URL</label>
+                      <input 
+                        type="text" 
+                        value={showEditModal.content?.image || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), image: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), image: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">API Endpoint</label>
+                      <input 
+                        type="text" 
+                        value={showEditModal.content?.apiEndpoint || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), apiEndpoint: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), apiEndpoint: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none text-xs font-mono" 
+                      />
+                    </div>
+                    <div className="space-y-4 pt-4 border-t border-gray-100">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Contact Info Cards</label>
+                      <div className="space-y-3">
+                        {(showEditModal.content?.contactInfo || []).map((info: any, idx: number) => (
+                          <div key={idx} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3 group relative">
+                            <button 
+                              onClick={() => {
+                                const newContactInfo = [...showEditModal.content.contactInfo];
+                                newContactInfo.splice(idx, 1);
+                                const newData = { ...pageData };
+                                newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...s.content, contactInfo: newContactInfo } } : s);
+                                setPageData(newData);
+                                setShowEditModal({ ...showEditModal, content: { ...showEditModal.content, contactInfo: newContactInfo } });
+                              }}
+                              className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all shadow-lg z-10"
+                            >
+                              <TrashIcon className="w-3 h-3" />
+                            </button>
+                            <div className="grid grid-cols-3 gap-3">
+                              <input 
+                                type="text" 
+                                value={info.icon} 
+                                onChange={(e) => {
+                                  const newContactInfo = [...showEditModal.content.contactInfo];
+                                  newContactInfo[idx].icon = e.target.value;
+                                  const newData = { ...pageData };
+                                  newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...s.content, contactInfo: newContactInfo } } : s);
+                                  setPageData(newData);
+                                  setShowEditModal({ ...showEditModal, content: { ...showEditModal.content, contactInfo: newContactInfo } });
+                                }}
+                                className="text-[10px] font-black text-[#6ab149] bg-transparent outline-none uppercase" 
+                                placeholder="Icon Name" 
+                              />
+                              <input 
+                                type="text" 
+                                value={info.title} 
+                                onChange={(e) => {
+                                  const newContactInfo = [...showEditModal.content.contactInfo];
+                                  newContactInfo[idx].title = e.target.value;
+                                  const newData = { ...pageData };
+                                  newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...s.content, contactInfo: newContactInfo } } : s);
+                                  setPageData(newData);
+                                  setShowEditModal({ ...showEditModal, content: { ...showEditModal.content, contactInfo: newContactInfo } });
+                                }}
+                                className="text-[10px] font-black bg-transparent outline-none" 
+                                placeholder="Card Title" 
+                              />
+                            </div>
+                            <textarea 
+                              value={info.content} 
+                              onChange={(e) => {
+                                const newContactInfo = [...showEditModal.content.contactInfo];
+                                newContactInfo[idx].content = e.target.value;
+                                const newData = { ...pageData };
+                                newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...s.content, contactInfo: newContactInfo } } : s);
+                                setPageData(newData);
+                                setShowEditModal({ ...showEditModal, content: { ...showEditModal.content, contactInfo: newContactInfo } });
+                              }}
+                              className="w-full text-[11px] text-gray-500 bg-transparent outline-none leading-relaxed min-h-[60px]" 
+                              placeholder="Contact detail content" 
+                            />
+                          </div>
+                        ))}
+                        <button 
+                          onClick={() => {
+                            const newContactInfo = [...(showEditModal.content?.contactInfo || []), { title: 'New Info', icon: 'info', content: '' }];
+                            const newData = { ...pageData };
+                            newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), contactInfo: newContactInfo } } : s);
+                            setPageData(newData);
+                            setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), contactInfo: newContactInfo } });
+                          }}
+                          className="w-full py-3 border-2 border-dashed border-gray-200 rounded-2xl text-[10px] font-bold text-gray-400 hover:border-[#6ab149] hover:text-[#6ab149] transition-all"
+                        >
+                          + Add New Contact Info
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* IF MAP */}
+                {showEditModal.type === 'Map' && (
+                  <div className="space-y-6 animate-in slide-in-from-top-2">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Section Title</label>
+                      <input 
+                        type="text" 
+                        value={showEditModal.content?.title || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), title: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), title: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none font-bold" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Subtitle</label>
+                      <textarea 
+                        value={showEditModal.content?.subtitle || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), subtitle: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), subtitle: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none min-h-[60px] font-medium" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Google Maps Embed URL</label>
+                      <textarea 
+                        value={showEditModal.content?.mapSrc || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), mapSrc: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), mapSrc: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none min-h-[60px] font-mono text-xs" 
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Map Label</label>
+                        <input 
+                          type="text" 
+                          value={showEditModal.content?.mapLabel || ''}
+                          onChange={(e) => {
+                            const newData = { ...pageData };
+                            newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), mapLabel: e.target.value } } : s);
+                            setPageData(newData);
+                            setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), mapLabel: e.target.value } });
+                          }}
+                          className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none font-bold" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">CTA Button Text</label>
+                        <input 
+                          type="text" 
+                          value={showEditModal.content?.ctaText || ''}
+                          onChange={(e) => {
+                            const newData = { ...pageData };
+                            newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), ctaText: e.target.value } } : s);
+                            setPageData(newData);
+                            setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), ctaText: e.target.value } });
+                          }}
+                          className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none font-bold" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">CTA Button Link</label>
+                      <input 
+                        type="text" 
+                        value={showEditModal.content?.ctaLink || ''}
+                        onChange={(e) => {
+                          const newData = { ...pageData };
+                          newData[activePage] = newData[activePage].map(s => s.id === showEditModal.id ? { ...s, content: { ...(s.content || {}), ctaLink: e.target.value } } : s);
+                          setPageData(newData);
+                          setShowEditModal({ ...showEditModal, content: { ...(showEditModal.content || {}), ctaLink: e.target.value } });
+                        }}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white outline-none" 
+                      />
+                    </div>
+                  </div>
+                )}
+
               </div>
             </div>
 
             {/* Footer Modal */}
             <div className="p-8 bg-gray-50 flex gap-4">
-              <button 
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                 onClick={() => setShowEditModal(null)} 
-                className="flex-1 py-4 font-black text-gray-500 hover:bg-gray-200 rounded-2xl transition-all uppercase text-xs tracking-widest"
+                className="flex-1 py-4 font-black text-gray-500 hover:bg-gray-200 rounded-2xl transition-colors duration-200 uppercase text-xs tracking-widest"
               >
                 Discard
-              </button>
-              <button 
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02, boxShadow: '0 20px 40px -12px rgba(106,177,73,0.4)' }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                 onClick={() => {
                   handleSaveAll();
                   setShowEditModal(null);
                 }} 
-                className="flex-1 py-4 bg-[#6ab149] text-white font-black rounded-2xl shadow-xl shadow-[#6ab149]/20 hover:brightness-110 active:scale-95 transition-all uppercase text-xs tracking-widest"
+                className="flex-1 py-4 bg-[#6ab149] text-white font-black rounded-2xl shadow-xl shadow-[#6ab149]/20 hover:brightness-110 transition-all uppercase text-xs tracking-widest"
               >
                 Save Changes
-              </button>
+              </motion.button>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Floating Save Notifier */}
-      <div className={`fixed bottom-10 right-10 bg-white p-4 pl-6 rounded-3xl flex items-center gap-10 shadow-[0_20px_60px_rgba(0,0,0,0.2)] transition-all duration-500 border border-gray-100 ${
-        isSaving ? 'translate-y-20 opacity-0' : 'translate-y-0 opacity-100'
-      }`}>
+      <motion.div
+        initial={{ opacity: 0, y: 80, scale: 0.95 }}
+        animate={{ opacity: isSaving ? 0 : 1, y: isSaving ? 20 : 0, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+        className={`fixed bottom-10 right-10 bg-white p-4 pl-6 rounded-3xl flex items-center gap-10 shadow-[0_20px_60px_rgba(0,0,0,0.2)] border border-gray-100 ${
+          isSaving ? 'pointer-events-none' : ''
+        }`}
+      >
         <div className="flex items-center gap-4">
           <div className="relative">
             <div className="w-3 h-3 bg-[#6ab149] rounded-full animate-ping absolute inset-0"></div>
@@ -1510,14 +2433,68 @@ export default function AdminPages() {
             <p className="text-sm font-black text-gray-800 tracking-tight">Live Sync Active</p>
           </div>
         </div>
-        <button 
+        <motion.button
+          whileHover={{ scale: 1.03, boxShadow: '0 20px 40px -12px rgba(106,177,73,0.5)' }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           onClick={handleSaveAll}
           disabled={isSaving}
-          className="bg-[#6ab149] px-8 py-3.5 rounded-[20px] text-sm font-black hover:brightness-110 active:scale-95 transition-all text-white flex items-center gap-3 shadow-lg shadow-[#6ab149]/20"
+          className="bg-[#6ab149] px-8 py-3.5 rounded-[20px] text-sm font-black hover:brightness-110 text-white flex items-center gap-3 shadow-lg shadow-[#6ab149]/20"
         >
-          {isSaving ? 'Syncing...' : <><CheckIcon className="w-6 h-6" /> Publish Changes</>}
-        </button>
-      </div>
+          {isSaving ? (
+            <motion.span
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+            >
+              <CheckIcon className="w-6 h-6" />
+            </motion.span>
+          ) : (
+            <><CheckIcon className="w-6 h-6" /> Publish Changes</>
+          )}
+        </motion.button>
+      </motion.div>
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            key={toast.message}
+            variants={toastVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed top-6 right-6 z-[100] bg-white rounded-2xl shadow-2xl border border-gray-100 px-6 py-4 flex items-center gap-4"
+          >
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+              toast.type === 'success' ? 'bg-[#6ab149]/10 text-[#6ab149]' : 'bg-red-500/10 text-red-500'
+            }`}>
+              {toast.type === 'success' ? (
+                <motion.span
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                >
+                  <CheckIcon className="w-4 h-4" />
+                </motion.span>
+              ) : (
+                <Cross1Icon className="w-4 h-4" />
+              )}
+            </div>
+            <div>
+              <p className="text-sm font-black text-gray-900">{toast.message}</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">System Notification</p>
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setToast(null)}
+              className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <Cross1Icon className="w-3 h-3 text-gray-400" />
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

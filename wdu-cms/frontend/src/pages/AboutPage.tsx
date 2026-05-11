@@ -30,7 +30,7 @@ export default function AboutPage() {
     photoUrl: "https://wahanadata.co.id/wp-content/uploads/2025/02/Pak-Yudi-homepage-2.png",
     isActive: true
   });
-const [heroData, setHeroData] = useState({
+  const [heroData, setHeroData] = useState({
     badgeText: 'Tentang Kami',
     headline: ['Mengubah Data Menjadi', 'Kekuatan Untuk', 'Keputusan Cerdas'],
     description: 'Wahana Data Utama adalah mitra terpercaya dalam bidang riset dan analisis data yang membantu organisasi pemerintah dan swasta di Indonesia.',
@@ -72,7 +72,7 @@ const [heroData, setHeroData] = useState({
         try {
           const sections = JSON.parse(storedSections);
           const aboutSections = sections['Tentang Kami'] || [];
-          
+
           // Hero Sync
           const heroSec = aboutSections.find((s: any) => s.type === 'Hero');
           if (heroSec?.content && heroSec.status === 'Published') {
@@ -109,7 +109,7 @@ const [heroData, setHeroData] = useState({
           if (directorsSec?.content && directorsSec.status === 'Published') {
             setDirectors(directorsSec.content.members || []);
           }
-        } catch (e) {}
+        } catch (e) { }
       }
 
       // 2. Legacy Fallback
@@ -118,7 +118,7 @@ const [heroData, setHeroData] = useState({
         try {
           const settings = JSON.parse(stored);
           if (settings.ceoProfile) setCeoProfile(settings.ceoProfile);
-        } catch (e) {}
+        } catch (e) { }
       }
     };
 
@@ -208,16 +208,16 @@ const [heroData, setHeroData] = useState({
         {floatingParticles.map((_, i) => (
           <motion.div
             key={i}
-            initial={{ 
-              x: Math.random() * 100 - 50 + "%", 
+            initial={{
+              x: Math.random() * 100 - 50 + "%",
               y: Math.random() * 100 - 50 + "%",
-              opacity: 0 
+              opacity: 0
             }}
-            animate={{ 
+            animate={{
               y: ["-20%", "20%"],
               opacity: [0, 0.3, 0]
             }}
-            transition={{ 
+            transition={{
               duration: 5 + Math.random() * 10,
               repeat: Infinity,
               ease: "linear"
@@ -299,7 +299,7 @@ const [heroData, setHeroData] = useState({
         <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 translate-x-1/2"></div>
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-24 items-center">
-            
+
             <div className="lg:col-span-5 space-y-12">
               <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="space-y-6">
                 <motion.span variants={fadeInUp} className="text-primary font-black uppercase tracking-[0.4em] text-xs">Arah & Tujuan</motion.span>
@@ -326,7 +326,7 @@ const [heroData, setHeroData] = useState({
                   <h3 className="text-4xl font-black text-slate-900 uppercase italic">Misi Strategis</h3>
                   <div className="h-1.5 w-24 bg-primary"></div>
                 </div>
-                
+
                 {visiMisi.misi.map((misi, i) => (
                   <motion.div
                     key={i}
@@ -352,8 +352,8 @@ const [heroData, setHeroData] = useState({
       </section>
 
       {/* History / Values Section */}
-      <section 
-        className="py-32 bg-white relative overflow-hidden" 
+      <section
+        className="py-32 bg-white relative overflow-hidden"
         id="about-section"
       >
         <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -386,7 +386,7 @@ const [heroData, setHeroData] = useState({
 
             {/* Kolon Kanan: Image / Visual */}
             <div className="lg:col-span-5 relative">
-              <motion.div 
+              <motion.div
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
@@ -395,7 +395,7 @@ const [heroData, setHeroData] = useState({
                 <div className="absolute inset-0 bg-[#4CAF50]/10 rounded-[3rem] rotate-6 scale-105"></div>
                 <div className="relative aspect-square rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white">
                   <motion.div variants={revealLeft} className="absolute inset-0 bg-[#4CAF50] z-20"></motion.div>
-                  <motion.img 
+                  <motion.img
                     variants={imageScale}
                     src={historyData.image}
                     alt="WDU Professionalism"

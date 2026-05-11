@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
 import { PageProvider } from './context/PageContext';
 import './index.css';
@@ -25,10 +26,12 @@ loadDarkMode();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <PageProvider>
-        <App />
-      </PageProvider>
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <PageProvider>
+          <App />
+        </PageProvider>
+      </BrowserRouter>
+    </HelmetProvider>
   </React.StrictMode>
 );

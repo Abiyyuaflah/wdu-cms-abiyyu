@@ -36,6 +36,7 @@ import AdminSiteConfig from "./admin/AdminSiteConfig";
 import AdminSecurity from "./admin/AdminSecurity";
 import AdminIntegration from "./admin/AdminIntegration";
 import AdminActivityLog from "./admin/AdminActivityLog";
+import AdminMetaSEO from "./admin/AdminMetaSEO";
 
 const pageVariants: Variants = {
   initial: { opacity: 0, x: -20 },
@@ -92,6 +93,7 @@ function App() {
           <Route path="config/profile" element={<AnimatedPage><AdminProfile /></AnimatedPage>} />
           <Route path="config/security" element={<AnimatedPage><AdminSecurity /></AnimatedPage>} />
           <Route path="config/integration" element={<AnimatedPage><AdminIntegration /></AnimatedPage>} />
+          <Route path="config/seo" element={<AnimatedPage><AdminMetaSEO /></AnimatedPage>} />
           <Route path="activity" element={<AnimatedPage><AdminActivityLog /></AnimatedPage>} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Route>
